@@ -1,0 +1,40 @@
+create table stud_marks(name varchar(20), total int);
+create table result1(roll int, name varchar(20), class varchar(20));
+/
+create or replace procedure proc_grade(rn IN number, sname IN varchar2, smarks IN int) 
+is
+stud_class varchar(20);
+begin
+if(smarks<=1500 and smarks>=990) then stud_class := 'Distinction';
+else if(smarks<=989 and smarks>=900) then stud_class := 'First Class';
+else if(smarks<=889 and smarks>=825) then stud_class := 'Higher Second Class';
+else stud_class:='Not Known';
+end if;
+end if;
+end if;
+insert into stud_marks values(sname, smarks);
+insert into result1 values(rn,sname,stud_class);
+end ;
+/
+create function count_students(class1 in varchar2)
+return int 
+IS 
+countstd int;
+BEGIN
+select count(roll) 
+into countstd from result1 where class1=class;
+return countstd;
+END;
+/
+call proc_grade(1,'aditya',1444);
+/
+select * from stud_marks;
+select * from result1;
+/
+select count_students('Distinction') from result1;
+/
+drop procedure proc_grade;
+drop function count_students;
+drop table stud_marks;
+drop table result1;
+/
