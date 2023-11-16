@@ -1,0 +1,398 @@
+﻿Name –Dongare Rushikesh   Roll No – C32277     Class – TE Div:2
+Batch – T8              Subject - DBMS
+
+ASSIGNMENT N0 – 3
+
+Problem statement : Create a bank databse with following tables: Branch master(branch_id,branch_name) Employee master(emp_no,emp_name,branch_id,salary,Dept,manager_id) (manager_id & branch_id is foreign key) Conatct details(emp_id,email_id,phone_no) (Apply on delete set null constraint & foreign key on emp_id) EmpAddress details(emp_id,street,city,state) (Apply on delete set cascade constraint & foreign keyon emp_id) Branch address(branch_id,city,state)(branch_id is foreign key).
+
+----------------------------------------------------------------
+Create a Bank database with following tables.
+
+
+1. Branch_master(branch_id, branch_name)
+
+mysql> CREATE TABLE Branch_master (branch_id INT PRIMARY KEY, branch_name VARCHAR(25));
+Query OK, 0 rows affected (0.04 sec)
+
+
+2. Employee_master(emp_no, emp_name, branch_id, salary, department, manager_id)
+
+mysql> CREATE TABLE Employee_master(
+    -> emp_no INT PRIMARY KEY,
+    -> emp_name VARCHAR(25),
+    -> branch_id INT,
+    -> salary DECIMAL(10,2),
+    -> department VARCHAR(20),
+    -> manager_id INT,
+    -> FOREIGN KEY(branch_id) REFERENCES Branch_master(branch_id),
+    -> FOREIGN KEY(manager_id) REFERENCES Employee_master(emp_no));
+Query OK, 0 rows affected (0.03 sec)
+
+
+3. Contact_details(emp_id, email_id, phone_no)
+
+mysql> CREATE TABLE Contact_details (
+    ->     emp_id INT,
+    ->     email_id VARCHAR(25),
+    ->     phone_no INT,
+    ->     FOREIGN KEY (emp_id) REFERENCES Employee_master(emp_no) ON DELETE SET NULL);
+Query OK, 0 rows affected (0.01 sec)
+
+
+4. Employee_address_details(emp_id, street, city, state)
+
+mysql> CREATE TABLE Employee_address_details (
+    ->     emp_id INT,
+    ->     street VARCHAR(255),
+    ->     city VARCHAR(255),
+    ->     state VARCHAR(255),
+    ->     FOREIGN KEY (emp_id) REFERENCES Employee_master(emp_no) ON DELETE CASCADE
+    -> );
+Query OK, 0 rows affected (0.02 sec) 
+
+
+
+
+5. Branch_address(branch_id, city, sate)
+
+mysql> CREATE TABLE Branch_address (
+    ->     branch_id INT,
+    ->     city VARCHAR(255),
+    ->     state VARCHAR(255),
+    ->     FOREIGN KEY (branch_id) REFERENCES Branch_master(branch_id)
+    -> );
+Query OK, 0 rows affected (0.02 sec)
+
+Queries:
+
+1. Insert 5 records in each table.
+
+mysql> INSERT INTO Branch_master (branch_id, branch_name)
+    -> VALUES
+    ->     (1, 'Ambegaon'),
+    ->     (2, 'Vadgaon'),
+    ->     (3, 'Narhe'),
+    ->     (4, 'Kothrud'),
+    ->     (5, 'Warje');
+Query OK, 5 rows affected (0.00 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> INSERT INTO Employee_master (emp_no, emp_name, branch_id, salary, department, manager_id)
+    -> VALUES
+    ->     (101, 'Ved', 1, 50000.00, 'Manager', NULL),
+    ->     (102, 'Om', 2, 55000.00, 'HR', 101),
+    ->     (103, 'Kaustubh', 3, 60000.00, 'Finance', 101),
+    ->     (104, 'Ganesh', 4, 52000.00, 'Marketing', 101),
+    ->     (105, 'Piyush', 5, 48000.00, 'Operations', 101);
+Query OK, 5 rows affected (0.00 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> INSERT INTO Contact_details (emp_id, email_id, phone_no)
+    -> VALUES
+    ->     (101, 'ved@example.com', '1234567'),
+    ->     (102, 'om@example.com', '2345678'),
+    ->     (103, 'kaustya@example.com', '3456789'),
+    ->     (104, 'ganya@example.com', '4567890'),
+    ->     (105, 'piyush@example.com', '5678901');
+Query OK, 5 rows affected (0.00 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> INSERT INTO Employee_address_details (emp_id, street, city, state)
+    -> VALUES
+    ->     (101, '123 Street', 'Mumbai', 'Maharashtra'),
+    ->     (102, '456 Avenue', 'Delhi', 'Delhi'),
+    ->     (103, '789 Road', 'Bangalore', 'Karnataka'),
+    ->     (104, '101 Lane', 'Chennai', 'Tamil Nadu'),
+    ->     (105, '202 Drive', 'Kolkata', 'West Bengal');
+Query OK, 5 rows affected (0.01 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> INSERT INTO Branch_address (branch_id, city, state)
+    -> VALUES
+    ->     (1, 'Pune', 'Maharashtra'),
+    ->     (2, 'Delhi', 'Delhi'),
+    ->     (3, 'Bangalore', 'Karnataka'),
+    ->     (4, 'Pune', 'Maharashtra'),
+    ->     (5, 'Kolkata', 'West Bengal');
+Query OK, 5 rows affected (0.01 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+
+2. List the employee details along with branch name using the inner join and in the order of employee no.
+
+mysql> SELECT Employee_master.emp_no, emp_name, branch_name
+    -> FROM Employee_master
+    -> INNER JOIN Branch_master ON Employee_master.branch_id = Branch_master.branch_id
+    -> ORDER BY Employee_master.emp_no;
++--------+----------+-------------+
+| emp_no | emp_name | branch_name |
++--------+----------+-------------+
+|    101 | Ved      | Ambegaon    |
+|    102 | Om       | Vadgaon     |
+|    103 | Kaustubh | Narhe       |
+|    104 | Ganesh   | Kothrud     |
+|    105 | Piyush   | Warje       |
++--------+----------+-------------+
+5 rows in set (0.00 sec)
+
+
+3. List the details of employee who belong to admin department along with the branch name to which they belong.
+
+mysql> SELECT Employee_master.emp_no, emp_name, branch_name
+    -> FROM Employee_master
+    -> INNER JOIN Branch_master ON Employee_master.branch_id = Branch_master.branch_id
+    -> WHERE department = 'Admin';
++--------+----------+-------------+
+| emp_no | emp_name | branch_name |
++--------+----------+-------------+
+|    102 | Om       | Vadgaon     |
+|    105 | Piyush   | Warje       |
++--------+----------+-------------+
+2 rows in set (0.00 sec)
+
+
+4. List the employee name along with the phone number and city using inner join.
+
+mysql> SELECT em.emp_name, cd.phone_no, ead.city
+    -> FROM Employee_master em
+    -> INNER JOIN Contact_details cd ON em.emp_no = cd.emp_id
+    -> INNER JOIN Employee_address_details ead ON em.emp_no = ead.emp_id;
+
+
++----------+----------+-----------+
+| emp_name | phone_no | city      |
++----------+----------+-----------+
+| Ved      |  1234567 | Mumbai    |
+| Om       |  2345678 | Delhi     |
+| Kaustubh |  3456789 | Bangalore |
+| Ganesh   |  4567890 | Chennai   |
+| Piyush   |  5678901 | Kolkata   |
++----------+----------+-----------+
+5 rows in set (0.00 sec)
+
+5. List the employee name with the contact details(if any).
+
+mysql> SELECT em.emp_name, cd.email_id, cd.phone_no
+    -> FROM Employee_master em
+    -> LEFT JOIN Contact_details cd ON em.emp_no = cd.emp_id;
++----------+---------------------+----------+
+| emp_name | email_id            | phone_no |
++----------+---------------------+----------+
+| Ved      | ved@example.com     |  1234567 |
+| Om       | om@example.com      |  2345678 |
+| Kaustubh | kaustya@example.com |  3456789 |
+| Ganesh   | ganya@example.com   |  4567890 |
+| Piyush   | piyush@example.com  |  5678901 |
++----------+---------------------+----------+
+5 rows in set (0.00 sec)
+
+6. List the employee contact details irrespective of whether they are working or left.
+
+mysql> SELECT em.emp_name, cd.email_id, cd.phone_no
+    -> FROM Employee_master em
+    -> LEFT JOIN Contact_details cd ON em.emp_no = cd.emp_id;
++----------+---------------------+----------+
+| emp_name | email_id            | phone_no |
++----------+---------------------+----------+
+| Ved      | ved@example.com     |  1234567 |
+| Om       | om@example.com      |  2345678 |
+| Kaustubh | kaustya@example.com |  3456789 |
+| Ganesh   | ganya@example.com   |  4567890 |
+| Piyush   | piyush@example.com  |  5678901 |
++----------+---------------------+----------+
+5 rows in set (0.00 sec)
+
+7. Retrieve the employee’s name and their respective manager’s name.
+
+mysql> SELECT e1.emp_name,e2.emp_name AS Manager FROM Employee_master e1, Employee_master e2 WHERE e1.manager_id = e2.emp_no;
++----------+---------+
+| emp_name | Manager |
++----------+---------+
+| Om       | Ved     |
+| Kaustubh | Ved     |
+| Ganesh   | Ved     |
+| Piyush   | Ved     |
++----------+---------+
+4 rows in set (0.00 sec)
+
+8. List the employee details along with the branch name by using natural join.
+
+mysql> SELECT Employee_master.emp_no, emp_name, branch_name
+    -> FROM Employee_master
+    -> INNER JOIN Branch_master ON Employee_master.branch_id = Branch_master.branch_id;
++--------+----------+-------------+
+| emp_no | emp_name | branch_name |
++--------+----------+-------------+
+|    101 | Ved      | Ambegaon    |
+|    102 | Om       | Vadgaon     |
+|    103 | Kaustubh | Narhe       |
+|    104 | Ganesh   | Kothrud     |
+|    105 | Piyush   | Warje       |
++--------+----------+-------------+
+5 rows in set (0.00 sec)
+
+
+9. List the employee names who work at the Vadgaon branch along with the city of that employee.
+
+SELECT Employee_master.emp_name, Employee_address_details.city
+    -> FROM Employee_master
+    -> JOIN Employee_address_details ON Employee_master.emp_no = Employee_address_details.emp_id
+    -> JOIN Branch_master ON Employee_master.branch_id = Branch_master.branch_id
+    -> WHERE Branch_master.branch_name = 'Vadgaon';
++----------+-------+
+| emp_name | city  |
++----------+-------+
+| Om       | Delhi |
++----------+-------+
+1 row in set (0.00 sec)
+
+
+10. Find the employee who works at the Vadgaon branch with salary greater than 10000 and list the employee names with streets and city they live in.
+
+mysql> SELECT Employee_master.emp_name, Employee_address_details.street, Employee_address_details.city
+    -> FROM Employee_master
+    -> JOIN Employee_address_details ON Employee_master.emp_no = Employee_address_details.emp_id
+    -> JOIN Branch_master ON Employee_master.branch_id = Branch_master.branch_id
+    -> WHERE Branch_master.branch_name = 'Vadgaon'
+    -> AND Employee_master.salary > 10000;
++----------+------------+-------+
+| emp_name | street     | city  |
++----------+------------+-------+
+| Om       | 456 Avenue | Delhi |
++----------+------------+-------+
+1 row in set (0.00 sec)
+
+
+11. Find the employees who live and work in same city.
+
+mysql> SELECT Employee_master.emp_name, Employee_address_details.city AS work_city, Address.city AS residence_city
+    -> FROM Employee_master
+    -> JOIN Employee_address_details ON Employee_master.emp_no = Employee_address_details.emp_id
+    -> JOIN Employee_address_details AS Address ON Employee_master.emp_no = Address.emp_id
+    -> WHERE Employee_address_details.city = Address.city;
++----------+-----------+----------------+
+| emp_name | work_city | residence_city |
++----------+-----------+----------------+
+| Ved      | Mumbai    | Mumbai         |
+| Om       | Delhi     | Delhi          |
+| Kaustubh | Bangalore | Bangalore      |
+| Ganesh   | Chennai   | Chennai        |
+| Piyush   | Kolkata   | Kolkata        |
++----------+-----------+----------------+
+5 rows in set (0.00 sec)
+
+
+12. Find the employees whoose salaries are more than everybody who works at branch vadgaon.
+
+mysql> SELECT emp_name, salary
+    -> FROM Employee_master
+    -> WHERE salary > ALL (
+    ->     SELECT salary
+    ->     FROM Employee_master
+    ->     WHERE branch_id = (
+    ->         SELECT branch_id
+    ->         FROM Branch_master
+    ->         WHERE branch_name = 'Vadgaon'
+    ->     )
+    -> );
++----------+----------+
+| emp_name | salary   |
++----------+----------+
+| Kaustubh | 60000.00 |
++----------+----------+
+1 row in set (0.00 sec)
+
+
+13. Create a view which will contain total employees at each branch.
+
+mysql> CREATE VIEW Total_Employees_At_Branch AS
+    -> SELECT Branch_master.branch_id, branch_name, COUNT(Employee_master.emp_no) AS total_employees
+    -> FROM Branch_master
+    -> LEFT JOIN Employee_master ON Branch_master.branch_id = Employee_master.branch_id
+    -> GROUP BY Branch_master.branch_id, branch_name;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> SELECT * FROM Total_Employees_At_Branch;
+
+
++-----------+-------------+-----------------+
+| branch_id | branch_name | total_employees |
++-----------+-------------+-----------------+
+|         1 | Ambegaon    |               1 |
+|         2 | Vadgaon     |               1 |
+|         3 | Narhe       |               1 |
+|         4 | Kothrud     |               1 |
+|         5 | Warje       |               1 |
++-----------+-------------+-----------------+
+5 rows in set (0.00 sec)
+
+
+
+14. List the branch names where employee have salary greater than 1 Lakh.
+
+mysql> SELECT DISTINCT Branch_master.branch_name
+    -> FROM Employee_master
+    -> JOIN Branch_master ON Employee_master.branch_id = Branch_master.branch_id
+    -> WHERE Employee_master.salary > 100000;
++-------------+
+| branch_name |
++-------------+
+| Ambegaon    |
+| Vadgaon     |
+| Narhe       |
+| Warje       |
++-------------+
+
+4 rows in set (0.00 sec)
+
+
+15. Create a view which will show the average salary and the total salary at each branch .
+
+mysql> CREATE VIEW Branch_Salary_Info AS
+    -> SELECT
+    ->     branch_id,
+    ->     AVG(salary) AS avg_salary,
+    ->     SUM(salary) AS total_salary
+    -> FROM Employee_master
+    -> GROUP BY branch_id;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> SELECT * FROM Branch_Salary_Info;
++-----------+---------------+--------------+
+| branch_id | avg_salary    | total_salary |
++-----------+---------------+--------------+
+|         1 | 100000.000000 |    200000.00 |
+|         2 | 105000.000000 |    210000.00 |
+|         3 | 110000.000000 |    220000.00 |
+|         4 |  52000.000000 |    104000.00 |
+|         5 |  98000.000000 |    196000.00 |
++-----------+---------------+--------------+
+5 rows in set (0.00 sec)
+
+
+
+
+
+16. Find the employee who do not have a job at Vadgaon branch.
+
+mysql> SELECT emp_name
+    -> FROM Employee_master
+    -> WHERE branch_id <> (
+    ->     SELECT branch_id
+    ->     FROM Branch_master
+    ->     WHERE branch_name = 'Vadgaon'
+    -> );
++----------------+
+| emp_name       |
++----------------+
+| Ved            |
+| John Doe       |
+| Kaustubh       |
+| Bob Johnson    |
+| Ganesh         |
+| Sarah Williams |
+| Piyush         |
+| Michael Davis  |
++----------------+
+8 rows in set (0.00 sec)
+
