@@ -1,0 +1,640 @@
+﻿Name –Dongare Rushikesh   Roll No – C32277     Class – TE Div:2
+Batch – T8              Subject - DBMS
+
+ASSIGNMENT N0 – 2B
+
+Problem statement : Create a medical database having following tables: Patient table(patient_id,patient_name,Date of Admit,Age,City) Doctor table(doc_id,doc_name,qualification,experience,dept,city,salary) Treats table(doc_id,patient_id,disease) (use on delete cascade )
+----------------------------------------------------------------
+Create a medical database having following table-
+
+
+1. Patient table(pat_id, pat_name, date_of_admit, age, city)
+
+mysql> CREATE TABLE Patient(pat_id VARCHAR(20), pat_name VARCHAR(20), date_of_admit YEAR, age INT, city varchar(20),PRIM
+ARY KEY(pat_id) );
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> DESC Patient;
++---------------+-------------+------+-----+---------+-------+
+| Field         | Type        | Null | Key | Default | Extra |
++---------------+-------------+------+-----+---------+-------+
+| pat_id        | varchar(20) | NO   | PRI | NULL    |       |
+| pat_name      | varchar(20) | YES  |     | NULL    |       |
+| date_of_admit | year        | YES  |     | NULL    |       |
+| age           | int         | YES  |     | NULL    |       |
+| city          | varchar(20) | YES  |     | NULL    |       |
++---------------+-------------+------+-----+---------+-------+
+5 rows in set (0.00 sec)
+
+
+2. Doctor Table(doc_id, doc_name, qualification, exp , dept, city, salary)
+
+mysql> CREATE TABLE Doctor(doc_id VARCHAR(20), doc_name VARCHAR(20), qualification varchar(10), exp INT, dept VARCHAR(20
+), city VARCHAR(20), salary INT, PRIMARY KEY(doc_id));
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> DESC Doctor;
++---------------+-------------+------+-----+---------+-------+
+| Field         | Type        | Null | Key | Default | Extra |
++---------------+-------------+------+-----+---------+-------+
+| doc_id        | varchar(20) | NO   | PRI | NULL    |       |
+| doc_name      | varchar(20) | YES  |     | NULL    |       |
+| qualification | varchar(10) | YES  |     | NULL    |       |
+| exp           | int         | YES  |     | NULL    |       |
+| dept          | varchar(20) | YES  |     | NULL    |       |
+| city          | varchar(20) | YES  |     | NULL    |       |
+| salary        | int         | YES  |     | NULL    |       |
++---------------+-------------+------+-----+---------+-------+
+7 rows in set (0.00 sec)
+
+ 
+
+
+
+
+3. Treats Table(doc_id, pat_id, disease). Foreign key on doc_id and pat_id, doc_id ON delete cascade, pat_id ON delete set null.
+
+mysql> CREATE TABLE Treats(pat_id VARCHAR(20),doc_id VARCHAR(20), disease VARCHAR(20), CONSTRAINT fk_pat FOREIGN KEY(pat_id) REFERENCES Patient(pat_id) ON DELETE SET NULL , CONSTRAINT fk_doc FOREIGN KEY(doc_id) REFERENCES Doctor(doc_id) ON
+DELETE CASCADE );
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> DESC Treats;
++---------+-------------+------+-----+---------+-------+
+| Field   | Type        | Null | Key | Default | Extra |
++---------+-------------+------+-----+---------+-------+
+| pat_id  | varchar(20) | YES  | MUL | NULL    |       |
+| doc_id  | varchar(20) | YES  | MUL | NULL    |       |
+| disease | varchar(20) | YES  |     | NULL    |       |
++---------+-------------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+
+Queries-
+
+1. Insert at least 5 record in each table.
+
+mysql> INSERT INTO Patient (pat_id, pat_name, date_of_admit, age, city) VALUES
+    -> ('p1', 'AAA', 2023-09-15, 25, 'Pune'),
+    -> ('p2', 'AAB', 2023-09-16, 30, 'Mumbai'),
+    -> ('p3', 'AAC', 2023-09-17, 35, 'Hyderabad'),
+    -> ('p4', 'AAD', 2023-09-18, 40, 'Pune'),
+    -> ('p5', 'AAE', 2023-09-19, 45, 'Nashik'),
+    -> ('p6', 'AAF', 2023-09-20, 50, 'Delhi'),
+    -> ('p7', 'AAG', 2023-09-21, 28, 'Chennai'),
+    -> ('p8', 'AAH', 2023-09-22, 33, 'Hyderabad'),
+    -> ('p9', 'AAI', 2023-09-23, 38, 'Bangalore'),
+    -> ('p10', 'AAJ', 2023-09-24, 43, 'Mumbai');
+Query OK, 10 rows affected (0.00 sec)
+Records: 10 Duplicates: 0 Warnings: 0
+
+mysql> SELECT * FROM Patient;
++--------+----------+---------------+------+-----------+
+| pat_id | pat_name | date_of_admit | age  | city      |
++--------+----------+---------------+------+-----------+
+| p1     | AAA      |          1999 |   25 | Pune      |
+| p10    | AAJ      |          1990 |   43 | Mumbai    |
+| p2     | AAB      |          1998 |   30 | Mumbai    |
+| p3     | AAC      |          1997 |   35 | Hyderabad |
+| p4     | AAD      |          1996 |   40 | Pune      |
+| p5     | AAE      |          1995 |   45 | Nashik    |
+| p6     | AAF      |          1994 |   50 | Delhi     |
+| p7     | AAG      |          1993 |   28 | Chennai   |
+| p8     | AAH      |          1992 |   33 | Hyderabad |
+| p9     | AAI      |          1991 |   38 | Banglore  |
++--------+----------+---------------+------+-----------+
+10 rows in set (0.00 sec)
+
+
+
+mysql> INSERT INTO Doctor (doc_id, doc_name, qualification, exp, dept, city, salary)
+    -> VALUES
+    ->     ('d101', 'Shubham', 'MBBS', 10, 'General', 'Pune', 12000),
+    ->     ('d102', 'Shushant', 'PhD', 15, 'Accident', 'Mumbai', 14000),
+    ->     ('d103', 'Ved', 'MD', 8, 'Orthopedics', 'Hyderabad', 11000),
+    ->     ('d104', 'Om', 'MD', 12, 'Pediatrics', 'Chennai', 10000),
+    ->     ('d105', 'Suhas', 'PhD', 20, 'General', 'Kolkata', 15000);
+Query OK, 5 rows affected (0.01 sec)
+Records: 5 Duplicates: 0  Warnings: 0
+
+mysql> SELECT * FROM Doctor;
+5 rows in set (0.00 sec)
++------+---------+-------------+---+-------------+-----------+-------+
+|doc_id|doc_name |qualification|exp| dept        | city      |salary |
++------+---------+-------------+---+-------------+-----------+-------+
+|d101  | Shubham | MBBS        |10 | General     | Pune      | 12000 |
+|d102  | Shushant| PhD         |15 | Accident    | Mumbai    | 14000 |
+|d103  | Ved     | MD          | 8 | Orthopedics | Hyderabad | 11000 |
+|d104  | Om      | MD          |12 | Pediatrics  | Chennai   | 10000 |
+|d105  | Suhas   | PhD         |20 | General     | Kolkata   | 15000 |
++------+---------+-------------+---+-------------+-----------+-------+
+5 rows in set (0.00 sec)
+
+mysql> INSERT INTO Treats (doc_id, pat_id, disease)
+    -> VALUES
+    ->     ('d101', 'p1', 'Hypertension'),
+    ->     ('d102', 'p2', 'Migraine'),
+    ->     ('d103', 'p3', 'Fractured Arm'),
+    ->     ('d104', 'p4', 'Bronchitis'),
+    ->     ('d105', 'p5', 'Cancer');
+Query OK, 5 rows affected (0.01 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> SELECT * FROM Treats;
++--------+--------+---------------+
+| pat_id | doc_id | disease       |
++--------+--------+---------------+
+| p1     | d101   | Hypertension  |
+| p2     | d102   | Migraine      |
+| p3     | d103   | Fractured Arm |
+| p4     | d104   | Bronchitis    |
+| p5     | d105   | Cancer        |
++--------+--------+---------------+
+5 rows in set (0.00 sec)
+
+
+2. Display all the patients name between the age group 18-50.
+
+mysql> SELECT pat_name FROM Patient WHERE age BETWEEN 18 AND 50;
++----------+
+| pat_name |
++----------+
+| AAA      |
+| AAJ      |
+| AAB      |
+| AAC      |
+| AAD      |
+| AAE      |
+| AAF      |
+| AAG      |
+| AAH      |
+| AAI      |
++----------+
+10 rows in set (0.00 sec)
+
+
+3. Display the list of doctors who are MD.
+
+mysql> SELECT doc_name FROM Doctor WHERE qualification = 'MD';
++----------+
+| doc_name |
++----------+
+| Ved      |
+| Om       |
++----------+
+2 rows in set (0.00 sec)
+
+
+4. Display the list of doctors whose exp is 20+ years.
+
+mysql> SELECT doc_name FROM Doctor WHERE exp > 20;
++----------+
+| doc_name |
++----------+
+| Soham    |
+| Pratik   |
+| Omkar    |
+| Sujal    |
++----------+
+4 rows in set (0.00 sec)
+
+
+5. Display patients suffering from cancer.
+
+mysql> SELECT pat_name FROM Patient WHERE pat_id IN (SELECT pat_id FROM Treats WHERE disease = 'Cancer');
++----------+
+| pat_name |
++----------+
+| AAE      |
+| AAG      |
+| AAI      |
++----------+
+3 rows in set (0.01 sec)
+
+
+6. Display the patient’s name and doctor name who are in cancer.
+
+mysql> SELECT
+    -> (SELECT pat_name FROM Patient WHERE pat_id = t.pat_id) AS patient_name,
+    -> (SELECT doc_name FROM Doctor WHERE doc_id = t.doc_id) AS doctor_name FROM Treats t WHERE disease = 'Cancer';
++--------------+-------------+
+| patient_name | doctor_name |
++--------------+-------------+
+| AAE          | Suhas       |
+| AAG          | Pratik      |
+| AAI          | Omkar       |
++--------------+-------------+
+3 rows in set (0.00 sec)
+
+
+7. Display the patient name whose name starts with letter 'a’, end with 'a', having the exact 5 letters.
+
+mysql> SELECT pat_id,pat_name FROM Patient WHERE pat_name LIKE 'A%___%a';
++--------+----------+
+| pat_id | pat_name |
++--------+----------+
+| p11    | Amara    |
+| p12    | Alina    |
+| p13    | Anika    |
++--------+----------+
+3 rows in set (0.00 sec)
+
+
+8. Remove of the records of patients with pat_id = p10.
+
+mysql> DELETE FROM Patient WHERE pat_id = 'p10';
+Query OK, 1 row affected (0.01 sec)
+
+mysql> SELECT * FROM Patient;
++--------+----------+---------------+------+-----------+
+| pat_id | pat_name | date_of_admit | age  | city      |
++--------+----------+---------------+------+-----------+
+| p1     | AAA      |          1999 |   25 | Pune      |
+| p11    | Amara    |          1999 |   25 | Mumbai    |
+| p12    | Alina    |          1998 |   30 | Pune      |
+| p13    | Anika    |          1997 |   35 | Delhi     |
+| p2     | AAB      |          1998 |   30 | Mumbai    |
+| p3     | AAC      |          1997 |   35 | Hyderabad |
+| p4     | AAD      |          1996 |   40 | Pune      |
+| p5     | AAE      |          1995 |   45 | Nashik    |
+| p6     | AAF      |          1994 |   50 | Delhi     |
+| p7     | AAG      |          1993 |   28 | Chennai   |
+| p8     | AAH      |          1992 |   33 | Hyderabad |
+| p9     | AAI      |          1991 |   38 | BANGALORE |
++--------+----------+---------------+------+-----------+
+12 rows in set (0.00 sec)
+
+
+
+9. Remove all the records of doctor Suhas.
+
+mysql> DELETE FROM Doctor WHERE doc_name = 'Suhas';
+Query OK, 1 row affected (0.00 sec)
+
+mysql> SELECT * FROM Doctor;
+
+
++------+----------+-------------+-----+-------------+-----------+-------+
+|doc_id| doc_name |qualification| exp | dept        | city      |salary |
++------+----------+-------------+-----+-------------+-----------+-------+
+| d101 | Shubham  | MBBS        |  10 | General     | Pune      | 12000 |
+| d102 | Shushant | PhD         |  15 | Accident    | Mumbai    | 14000 |
+| d103 | Ved      | MD          |   8 | Orthopedics | Hyderabad | 11000 |
+| d104 | Om       | MD          |  12 | Pediatrics  | Chennai   | 10000 |
+| d106 | Soham    | MBBS        |  23 | General     | Chennai   | 12000 |
+| d107 | Pratik   | PhD         |  25 | Accident    | Mumbai    | 14000 |
+| d108 | Vedant   | MD          |  13 | Orthopedics | Delhi     | 11000 |
+| d109 | Omkar    | MD          |  22 | Pediatrics  | Delhi     | 10000 |
+| d110 | Sujal    | PhD         |  27 | General     | Mumbai    | 15000 |
++------+----------+-------------+-----+-------------+-----------+-------+
+9 rows in set (0.00 sec)
+
+
+10. Change the qualification of doctor Shubham from MBBS to MD.
+
+mysql> DELETE FROM Doctor WHERE doc_name = 'Suhas';
+Query OK, 1 row affected (0.00 sec)
+
+mysql> SELECT * FROM Doctor;
++------+----------+-------------+-----+-------------+-----------+-------+
+|doc_id| doc_name |qualification| exp | dept        | city      |salary |
++------+----------+-------------+-----+-------------+-----------+-------+
+| d101 | Shubham  | MD          |  10 | General     | Pune      | 12000 |
+| d102 | Shushant | PhD         |  15 | Accident    | Mumbai    | 14000 |
+| d103 | Ved      | MD          |   8 | Orthopedics | Hyderabad | 11000 |
+| d104 | Om       | MD          |  12 | Pediatrics  | Chennai   | 10000 |
+| d106 | Soham    | MBBS        |  23 | General     | Chennai   | 12000 |
+| d107 | Pratik   | PhD         |  25 | Accident    | Mumbai    | 14000 |
+| d108 | Vedant   | MD          |  13 | Orthopedics | Delhi     | 11000 |
+| d109 | Omkar    | MD          |  22 | Pediatrics  | Delhi     | 10000 |
+| d110 | Sujal    | PhD         |  27 | General     | Mumbai    | 15000 |
++------+----------+-------------+-----+-------------+-----------+-------+
+9 rows in set (0.00 sec)
+
+
+11. Give 5% salary raise to the Dentist and 10% to the Cardiologist in a single query.
+
+mysql> UPDATE Doctor
+    -> SET salary = salary * 1.05
+    -> WHERE dept = 'Dentist';
+Query OK, 2 rows affected (0.00 sec)
+Rows matched: 2 Changed: 2 Warnings: 0
+
+mysql>
+mysql> UPDATE Doctor
+    -> SET salary = salary * 1.10
+    -> WHERE dept = 'Cardiology';
+Query OK, 2 rows affected (0.00 sec)
+Rows matched: 2 Changed: 0 Warnings: 0
+
+mysql> SELECT doc_id, doc_name, dept, salary FROM Doctor;
+
+
+
++--------+----------+-------------+--------+
+| doc_id | doc_name | dept        | salary |
++--------+----------+-------------+--------+
+| d101   | Shubham  | General     |  12000 |
+| d102   | Shushant | Accident    |  14000 |
+| d103   | Ved      | Orthopedics |  11000 |
+| d104   | Om       | Pediatrics  |  10000 |
+| d106   | Soham    | General     |  12000 |
+| d107   | Pratik   | Accident    |  14000 |
+| d108   | Vedant   | Orthopedics |  11000 |
+| d109   | Omkar    | Pediatrics  |  10000 |
+| d110   | Sujal    | General     |  15000 |
+| d111   | Simran   | Cardiology  |  13200 |
+| d112   | Sarah    | Dentist     |  14700 |
+| d113   | Sankalp  | Orthopedics |  11000 |
+| d114   | Tanmay   | Dentist     |  10500 |
+| d115   | Deepak   | Cardiology  |  16500 |
++--------+----------+-------------+--------+
+14 rows in set (0.00 sec)
+
+
+12. Display department wise total salary of the doctors.
+
+mysql> SELECT dept, SUM(salary) AS total_salary FROM Doctor
+    -> GROUP BY dept;
++-------------+--------------+
+| dept        | total_salary |
++-------------+--------------+
+| General     |        39000 |
+| Accident    |        28000 |
+| Orthopedics |        33000 |
+| Pediatrics  |        20000 |
+| Cardiology  |        29700 |
+| Dentist     |        25200 |
++-------------+--------------+
+6 rows in set (0.01 sec)
+
+
+13. Find the department which has the highest average salary.
+
+mysql> SELECT dept
+    -> FROM Doctor
+    -> GROUP BY dept
+    -> HAVING AVG(salary) = (
+    ->     SELECT MAX(avg_salary)
+    ->     FROM (
+    ->         SELECT AVG(salary) AS avg_salary
+    ->         FROM Doctor
+    ->         GROUP BY dept
+    ->     ) AS avg_salaries
+    -> );
++------------+
+| dept       |
++------------+
+| Cardiology |
++------------+
+1 row in set (0.01 sec)
+
+14. Find the average salary of doctors in Dentist Department.
+
+mysql> SELECT AVG(salary) AS avg_salary FROM Doctor WHERE dept = 'Dentist';
++------------+
+| avg_salary |
++------------+
+| 12600.0000 |
++------------+
+1 row in set (0.00 sec)
+
+
+15. Find the department where average salary doctor is more than 50,000.
+
+mysql> SELECT dept
+    -> FROM Doctor
+    -> GROUP BY dept HAVING AVG(salary) > 50000;
+Empty set (0.00 sec)
+
+
+16. Find how many doctors work in hospital.
+
+mysql> SELECT COUNT(doc_name) AS Total_no_of_Doctors FROM Doctor;
++---------------------+
+| Total_no_of_Doctors |
++---------------------+
+|                  14 |
++---------------------+
+1 row in set (0.00 sec) 
+
+
+17. Find out how many doctors actually treated a patient.
+
+mysql> SELECT COUNT(DISTINCT doc_id) AS num_doctors FROM Treats;
++-------------+
+| num_doctors |
++-------------+
+|           9 |
++-------------+
+1 row in set (0.00 sec)
+
+
+18. List the cities in which either doctors or patient lives.
+
+mysql> SELECT city FROM Doctor UNION SELECT city FROM Patient;
++-----------+
+| city      |
++-----------+
+| Pune      |
+| Mumbai    |
+| Hyderabad |
+| Chennai   |
+| Delhi     |
+| Kolkata   |
+| Nashik    |
+| BANGALORE |
++-----------+
+8 rows in set (0.00 sec)
+
+19. List the cities where both live.
+
+mysql> SELECT city FROM Doctor INTERSECT SELECT city FROM Patient;
++-----------+
+| city      |
++-----------+
+| Pune      |
+| Mumbai    |
+| Hyderabad |
+| Chennai   |
+| Delhi     |
++-----------+
+5 rows in set (0.00 sec)
+
+
+20. List doctor name patient name and their cities name if they live in same city.
+
+mysql> SELECT d.doc_name AS doctors, p.pat_name AS patients, d.city AS city FROM Doctor d, Patient p WHERE d.city = p.city;
++----------+----------+-----------+
+| doctors  | patients | city      |
++----------+----------+-----------+
+| Shubham  | AAD      | Pune      |
+| Shubham  | Alina    | Pune      |
+| Shubham  | AAA      | Pune      |
+| Shushant | AAB      | Mumbai    |
+| Shushant | Amara    | Mumbai    |
+| Ved      | AAH      | Hyderabad |
+| Ved      | AAC      | Hyderabad |
+| Om       | AAG      | Chennai   |
+| Soham    | AAG      | Chennai   |
+| Pratik   | AAB      | Mumbai    |
+| Pratik   | Amara    | Mumbai    |
+| Vedant   | AAF      | Delhi     |
+| Vedant   | Anika    | Delhi     |
+| Omkar    | AAF      | Delhi     |
+| Omkar    | Anika    | Delhi     |
+| Sujal    | AAB      | Mumbai    |
+| Sujal    | Amara    | Mumbai    |
+| Simran   | AAD      | Pune      |
+| Simran   | Alina    | Pune      |
+| Simran   | AAA      | Pune      |
+| Sarah    | AAB      | Mumbai    |
+| Sarah    | Amara    | Mumbai    |
+| Sankalp  | AAH      | Hyderabad |
+| Sankalp  | AAC      | Hyderabad |
+| Tanmay   | AAG      | Chennai   |
++----------+----------+-----------+
+25 rows in set (0.00 sec)
+
+
+21. Find the doctors who have not treated any patient.
+
+mysql> SELECT doc_id, doc_name
+    -> FROM Doctor
+    -> WHERE doc_id NOT IN (SELECT DISTINCT doc_id FROM Treats);
++--------+----------+
+| doc_id | doc_name |
++--------+----------+
+| d111   | Simran   |
+| d112   | Sarah    |
+| d113   | Sankalp  |
+| d114   | Tanmay   |
+| d115   | Deepak   |
++--------+----------+
+5 rows in set (0.00 sec)
+
+22 a. Display name of doctors and patients as a single column.
+
+mysql> SELECT doc_name AS name FROM Doctor UNION
+    -> SELECT pat_name AS name FROM Patient;
++----------+
+| name     |
++----------+
+| Shubham  |
+| Shushant |
+| Ved      |
+| Om       |
+| Soham    |
+| Pratik   |
+| Vedant   |
+| Omkar    |
+| Sujal    |
+| Simran   |
+| Sarah    |
+| Sankalp  |
+| Tanmay   |
+| Deepak   |
+| AAA      |
+| Amara    |
+| Alina    |
+| Anika    |
+| AAB      |
+| AAC      |
+| AAD      |
+| AAE      |
+| AAF      |
+| AAG      |
+| AAH      |
+| AAI      |
++----------+
+26 rows in set (0.00 sec)
+
+   b. Let duplicate name appear many times.
+
+mysql> SELECT doc_name AS name FROM Doctor UNION ALL
+    -> SELECT pat_name AS name FROM Patient;
++----------+
+| name     |
++----------+
+| Shubham  |
+| Shushant |
+| Ved      |
+| Om       |
+| Om       |
+| Soham    |
+| Pratik   |
+| Vedant   |
+| Omkar    |
+| Sujal    |
+| Simran   |
+| Sarah    |
+| Sankalp  |
+| Tanmay   |
+| Deepak   |
+| AAA      |
+| Amara    |
+| Alina    |
+| Anika    |
+| Amara    |
+| AAB      |
+| AAB      |
+| AAC      |
+| AAC      |
+| AAD      |
+| AAE      |
+| AAF      |
+| AAG      |
+| AAH      |
+| AAI      |
++----------+
+30 rows in set (0.00 sec)
+
+
+23. What is the total money collected so far from treatment of patients.
+
+mysql> ALTER TABLE Treats ADD treatment_cost DECIMAL(10, 2);
+Query OK, 0 rows affected (0.03 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> SELECT SUM(treatment_cost) AS Total_Cost FROM Treats;
++------------+
+| Total_Cost |
++------------+
+|   29800.00 |
++------------+
+1 row in set (0.00 sec)
+ 
+24. Find average salary of each department.
+
+mysql> SELECT dept, AVG(salary) AS Avg_Salary FROM Doctor GROUP BY dept;
++-------------+------------+
+| dept        | Avg_Salary |
++-------------+------------+
+| General     | 13000.0000 |
+| Accident    | 14000.0000 |
+| Orthopedics | 11000.0000 |
+| Pediatrics  | 10000.0000 |
+| Cardiology  | 14850.0000 |
+| Dentist     | 12600.0000 |
++-------------+------------+
+6 rows in set (0.00 sec)
+
+25. Display patient which does not have email id.
+
+mysql> ALTER TABLE Patient ADD COLUMN email varchar(50);
+Query OK, 0 rows affected (0.02 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> SELECT * FROM Patient WHERE email IS NULL;
++--------+----------+---------------+------+-----------+-------+
+| pat_id | pat_name | date_of_admit | age  | city      | email |
++--------+----------+---------------+------+-----------+-------+
+| p19    | AAB      |          1998 |   30 | Pune      | NULL  |
+| p2     | AAB      |          1998 |   30 | Mumbai    | NULL  |
+| p20    | AAC      |          1997 |   35 | Delhi     | NULL  |
+| p5     | AAE      |          1995 |   45 | Nashik    | NULL  |
+| p6     | AAF      |          1994 |   50 | Delhi     | NULL  |
+| p7     | AAG      |          1993 |   28 | Chennai   | NULL  |
+| p8     | AAH      |          1992 |   33 | Hyderabad | NULL  |
++--------+----------+---------------+------+-----------+-------+
+7 rows in set (0.00 sec)
+
+
