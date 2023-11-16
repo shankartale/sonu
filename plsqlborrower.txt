@@ -1,0 +1,146 @@
+﻿Name –Dongare Rushikesh   Roll No – C32277     Class – TE Div:2
+Batch – T8              Subject - DBMS
+
+Assignment No – 4       
+
+problem statement: Consider Tables: 
+1. Borrower(Roll_no, Name, Date of Issue, Name of Book, Status) 
+2. Fine(Roll_no, Date, Amt) Accept Roll_no and Name of Book from user. Check the number of days (from date of issue). If days are between 15 to 30 then fine amount will be Rs 5per day. If no. of days>30, per day fine will be Rs 50 per day and for days less than 30, Rs. 5 perday. After submitting the book, status will change from I to R. If condition of fine is true, then details will be stored into fine table. Also handles the exception by named exception handler or user define exception handler
+----------------------------------------------------------------
+
+Consider Tables: 
+
+1. Borrower (Roll no, Name, DateofIssue, NameofBook, Status)
+
+SQL> CREATE TABLE borrower_t7(roll_no int, name varchar(20), date_of_i date, b_name varchar(20), status varchar(10));
+
+SQL>desc borrower_t7;
+
+ColumnNull?TypeROLL - NUMBERNAME - VARCHAR2(20)DATE_OF_I - DATEB_NAME - VARCHAR2(20)STATUS - VARCHAR2(10)
+2. Fine (Roll_no, Date, Amt)
+
+SQL>CREATE TABLE fine_t7(roll_no int, date_of_fine date, amt int);
+
+SQL>desc fine_t7;
+
+ColumnNull?TypeROLL - NUMBERSYS_DATE - DATEFINE_AMT - NUMBER
+
+
+SQL> insert into borrower_t7 values(1,'harsh','12-06-2017','harry potter','i');   1 row created.
+SQL> insert into borrower_t7 values(2,'sandesh','15-06-2017','iceage','r');     
+1 row created.
+SQL> select * from borrower_t7;
++----------+---------+-----------+-------------+-------+
+| Roll_NO  | Name    | date_of_i |   b_name    | status| 
++----------+---------+-----------+-------------+-------+
+|     1    | harsh   | 12-06-17  | harry potter| i     |       
+|     2    | sandesh | 12-06-17  |    iceage   | r     |       
++----------+---------+-----------+-------------+-------+
+
+SQL> insert into borrower_t7 values(3,'Rahul','25-07-2017','pokemon','i'); 1 row created.
+SQL> insert into borrower_t7 values(4,'sarvesh','20-04-2017','duel','r');
+1 row created.
+SQL> insert into borrower_t7 values(5,'ishwari','22-05-2017','hindikatha','i');
+1 row created.
+SQL> select * from borrower_t7;
++---------+----------+--------------+--------------+--------+
+| ROLL_NO |   NAME   |   DATE_OF_I  | NAME_OF_BOOK | STATUS |
++---------+----------+--------------+--------------+--------+
+|    1    |  harsh   |   12-06-17   | harry potter |   i    |
+|    2    | sandesh  |   15-06-17   |    iceage    |   r    |
+|    3    |  Rahul   |   25-07-17   |   pokemon    |   i    |
+|    4    | sarvesh  |   20-04-17   |     duel     |   r    |
+|    5    | ishwari  |   22-05-17   |  hindikatha  |   i    |
++-----------------------------------------------------------+
+
+
+
+
+
+
+
+
+
+mysql> DELIMITER //
+mysql>
+mysql> CREATE PROCEDURE checkAndInsertFine()
+    -> BEGIN
+    ->     DECLARE roll_number INT;
+    ->     DECLARE b_name VARCHAR(20);
+    ->     DECLARE mdays INT;
+    ->     DECLARE ndays DATE;
+    ->     DECLARE fine_amt INT;
+    ->
+    ->     -- Set your input values
+    ->     SET roll_number = 1;
+    ->     SET b_name = 'harry potter';
+    ->
+    ->     -- Your code
+    ->     SELECT date_of_i INTO ndays FROM borrower_t7 WHERE roll_no = roll_number AND b_name = b_name;
+    ->
+    ->     IF ndays IS NULL THEN
+    ->         SELECT 'No data found';
+    ->     ELSE
+    ->         SET mdays = DATEDIFF(NOW(), ndays);
+    ->
+    ->         IF mdays >= 15 AND mdays < 30 THEN
+    ->             SET fine_amt = (mdays - 15) * 5;
+    ->         ELSEIF mdays >= 30 THEN
+    ->             SET fine_amt = 15 * 5 + (mdays - 30) * 50;
+    ->         END IF;
+    ->
+    ->         UPDATE borrower_t7 SET status = 'r' WHERE roll_no = roll_number AND b_name = b_name;
+    ->
+    ->         IF fine_amt > 0 THEN
+    ->             INSERT INTO fine_t7 VALUES (roll_number, NOW(), fine_amt);
+    ->         END IF;
+    ->     END IF;
+    ->
+    ->     -- Display output
+    ->     SELECT 'Exception occurred';
+    ->
+    -> END //
+Query OK, 0 rows affected (0.02 sec)
+
+mysql>
+mysql> DELIMITER ;
+mysql> CALL checkAndInsertFine();
++--------------------+
+| Exception occurred |
++--------------------+
+| Exception occurred |
++--------------------+
+1 row in set (0.01 sec)
+
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> select *from fine_t7;
++---------+--------------+--------+
+| roll_no | date_of_fine | amt    |
++---------+--------------+--------+
+|       1 | 2023-11-15   | 115925 |
++---------+--------------+--------+
+1 row in set (0.00 sec)
+
+mysql>
+SQL>select * from fine_t7;
++---------+---------------+-----+
+| ROLL_NO |  DATE_OF_fine | AMT |
+|---------|---------------|-----|
+|    3    |  23-08-17     |  75 |
++-------------------------------+
+
+SQL> select * from borrower_t7;
++---------+----------+--------------+--------------+--------+
+| ROLL_NO |   NAME   |   DATE_OF_I  | NAME_OF_BOOK | STATUS |
+|---------|----------|--------------|--------------|--------|
+|    1    |  harsh   |   12-06-17   | harry potter |   i    |
+|    2    | sandesh  |   15-06-17   |    iceage    |   r    |
+|    3    |  Rahul   |   25-07-17   |   pokemon    |   r    |
+|    4    | sarvesh  |   20-04-17   |     duel     |   r    |
+|    5    | ishwari  |   22-05-17   |  hindikatha  |   i    |
++-----------------------------------------------------------+
+
+
+
+ 
