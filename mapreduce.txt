@@ -1,0 +1,100 @@
+﻿Name –Dongare Rushikesh   Roll No – C32277     Class – TE Div:2
+Batch – T8              Subject - DBMS
+
+Assignment No – B3       Batch – T20
+
+Title: MongoDB - Map reduces operations.
+
+Problem Statement: Map reduce operation with suitable example using MongoDB. Create an orders collection with fields customer id, order date, status, price and items, quantity. Execute following queries using mapreduce. Perform map reduce operation on orders collection . Perform following queries using map reduce.
+----------------------------------------------------------------
+Queries – 
+
+
+db.createCollection("orders");
+{ ok: 1 }
+codeAk> db.orders.insertOne({
+... order_id:1,
+... cust_id:101,
+... cust_name:"Akshay",
+... phone_no:['1314341311','134463423234'],
+... email_id:'akdaht@fadf.com',
+... item_name:"Product A",
+... DtOfOrder:"03-12-2999",
+... quantity:2,
+... amount:100.3,
+... status:'P'
+... });             //else make by your own
+
+1. Display total price per customer.
+
+codeAk> var map = function(){emit(this.cust_id,this.amount);};
+
+codeAk> var red = function(cust_id,amount){return Array.sum(amount);};
+
+codeAk> db.orders.mapReduce(map,red,{'out':'total_amounts'});
+ 
+{ result: 'total_amounts', ok: 1 }
+
+codeAk> db.total_amounts.find();
+[ { _id: 101, value: 100.3 } ]
+
+2. Display total price per customer having status= P
+
+codeAk> db.orders.mapReduce(map,red,{'query':{status:'P'},'out':'new1'})
+{ result: 'new1', ok: 1 }
+
+codeAk> db.new1.find();
+
+b3> db.new1.find().pretty()
+[ { _id: 101, value: 100.3 } ]
+
+
+
+3. Display total price for Status =D
+
+
+b3> db.orders.mapReduce(map,red,{'query':{Status:'D'},'out':'new2'})
+{ result: 'new2', ok: 1 }
+
+b3> db.new2.find().pretty()
+{ "_id" : 101, "price" : 50.00 }
+{ "_id" : 103, "price" : 30.25 }
+
+
+
+
+
+
+
+
+
+
+
+4. Finding count of all keys in orders collection
+
+codeAk> var mapfun = function(){ for(var key in this){ if(key!=="-id"){
+... emit(key,1);
+... }
+... }
+... };
+
+codeAk> var redfun = function(key,values){
+... return Array.sum(values);
+... };
+
+codeAk> db.orders.mapReduce(mapfun,redfun,{out:'keyCounts'});
+{ result: 'keyCounts', ok: 1 }
+codeAk> db.keyCounts.find();
+[
+  { _id: 'item_name', value: 1 },
+  { _id: 'cust_name', value: 1 },
+  { _id: 'cust_id', value: 1 },
+  { _id: '_id', value: 1 },
+  { _id: 'DtOfOrder', value: 1 },
+  { _id: 'quantity', value: 1 },
+  { _id: 'order_id', value: 1 },
+  { _id: 'amount', value: 1 },
+  { _id: 'status', value: 1 },
+  { _id: 'phone_no', value: 1 },
+  { _id: 'email_id', value: 1 }
+]
