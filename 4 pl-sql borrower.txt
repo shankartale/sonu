@@ -1,0 +1,38 @@
+create table borrower(roll int, name varchar(20), bookName varchar(20), issueDate date, status char);
+/
+insert into borrower values(1,'adi','alchemist','10-oct-2023','I');
+insert into borrower values(2,'om','c++','20-oct-2023','I');
+insert into borrower values(3,'akshay','java','31-oct-2023','I');
+insert into borrower values(4,'venktesh','cns','10-nov-2023','I');
+insert into borrower values(5,'prem','os','1-nov-2023','I');
+/
+create table fine(roll int, retDate date, amount int);
+--SELECT * FROM fine;
+/
+DECLARE 
+i_date date;
+diff int;
+fine_amt int;
+rno int := 3;
+bname varchar(20) := 'java';
+BEGIN
+select issueDate into i_date from borrower where roll = rno and bookName =bname;
+diff := CURRENT_DATE-i_date;
+if(diff>15 and diff<=30) then fine_amt := diff*5;
+insert into fine values (rno, CURRENT_DATE, fine_amt);
+else if(diff>30) then fine_amt := 15*5+ (diff-30)*50;
+insert into fine values(rno,CURRENT_DATE,fine_amt);
+update borrower set status = 'R' where roll=rno and bookName =bname; 
+else
+insert into fine values(rno,CURRENT_DATE,fine_amt);
+update borrower set status = 'R' where roll=rno and bookName =bname; 
+end if;
+end if;
+end;
+/
+SELECT * FROM fine;
+SELECT * FROM borrower;
+
+drop table borrower;
+drop table fine;
+/
