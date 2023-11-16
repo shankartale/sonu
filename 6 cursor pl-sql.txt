@@ -1,0 +1,39 @@
+create table O_RollCall(roll int, name varchar(20), age int, bld_grp char(5));
+/
+insert into O_RollCall values(1,'aditya',20,'a+');
+insert into O_RollCall values(2,'om',20,'b+');
+insert into O_RollCall values(3,'jay',20,'ab+');
+insert into O_RollCall values(4,'sahil',20,'b+');
+insert into O_RollCall values(5,'venkat',20,'o+');
+/
+create table N_RollCall(roll int, name varchar(20), age int, bld_grp char(5));
+/
+insert into N_RollCall values(1,'aditya',20,'a+');
+insert into N_RollCall values(2,'om',20,'b+');
+insert into N_RollCall values(3,'jay',20,'ab+');
+/
+select * from O_RollCall;
+select * from N_RollCall;
+/
+DECLARE
+      CURSOR Cur_O IS SELECT * FROM O_RollCall;
+      CURSOR Cur_N(rn_o int) IS SELECT * FROM N_RollCall WHERE roll = rn_o;
+      s_rec N_RollCall%rowtype;
+     BEGIN 
+       FOR s_rec in Cur_O LOOP
+         OPEN Cur_N(s_rec.roll);
+         FETCH Cur_N into s_rec;
+
+     IF Cur_N%NOTFOUND THEN
+       INSERT INTO N_RollCall VALUES(s_rec.roll, s_rec.name, s_rec.age,s_rec.bld_grp);
+     END IF;
+     CLOSE Cur_N;
+   END LOOP;
+END;
+/
+select * from O_RollCall;
+select * from N_RollCall;
+/
+drop table N_RollCall;
+drop table O_RollCall;
+drop procedure cursor1;
