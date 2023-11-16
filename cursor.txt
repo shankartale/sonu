@@ -1,0 +1,156 @@
+﻿Name –Dongare Rushikesh   Roll No – C32277     Class – TE Div:2
+Batch – T8              Subject - DBMS
+
+Assignment No – 6      
+
+Problem Statement: Write a PL/SQL block to create a cursor to copy contents of one table into another. Avoid redundancy. Write a PL/SQL block of code using parameterized Cursor, that will merge the data available in the newly created table N_RollCall with the data available in the table O_RollCall. If the data in the first table already exists in the second table then that data should be skipped.
+----------------------------------------------------------------
+
+SQL> CREATE TABLE O_RollCall (rn int, name varchar(25), marks int)
+
+Table created.
+
+INSERT INTO O_RollCall VALUES(1,'AAA', 36);
+Query OK, 1 row affected (0.01 sec)
+
+mysql>  INSERT INTO O_RollCall VALUES(2,'BBB', 36);
+Query OK, 1 row affected (0.00 sec)
+
+INSERT INTO O_RollCall VALUES(3,'CCC', 36);
+Query OK, 1 row affected (0.01 sec)
+
+mysql>  INSERT INTO O_RollCall VALUES(4,'DDD', 36);
+Query OK, 1 row affected (0.01 sec)
+
+mysql>  INSERT INTO O_RollCall VALUES(5,'EEE', 36);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from O_RollCall;
++------+------+-------+
+| rno  | name | marks |
++------+------+-------+
+|    1 | AAA  |    36 |
+|    2 | BBB  |    36 |
+|    3 | CCC  |    36 |
+|    4 | DDD  |    36 |
+|    5 | EEE  |    36 |
++------+------+-------+
+5 rows in set (0.00 sec)
+
+SQL> CREATE TABLE N_RollCall(rn int, name varchar(25), marks int)
+
+Table created.
+
+mysql>  INSERT INTO N_RollCall VALUES(1,'AAA', 36);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO N_RollCall VALUES(6,'FFF', 36);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from N_RollCall;
++------+------+-------+
+| rno  | name | marks |
++------+------+-------+
+|    1 | AAA  |    36 |
+|    6 | FFF  |    36 |
++------+------+-------+
+2 rows in set (0.00 sec)
+
+
+
+
+
+mysql> delimiter //
+mysql> create procedure n2(IN rno1 int)
+    ->      begin
+    ->      declare rno2 int;
+    ->      declare exit_cond boolean;
+    ->      declare c1 cursor for select rno from O_RollCall where rno>rno1;
+    ->      declare continue handler for not found set exit_cond = TRUE;
+    ->      open c1;
+    ->      l1: loop
+    ->      fetch c1 into rno2;
+    ->      if not exists(select * from N_RollCall where rno = rno2) then
+    ->      insert into N_RollCall select * from O_RollCall where rno = rno2;
+    ->      end if;
+    ->      if exit_cond then
+    ->      close c1;
+    ->      leave l1;
+    ->      end if;
+    ->      end loop l1;
+    ->      end;
+    ->      //
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> call n2(0);
+    -> //
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> delimiter ;
+
+
+mysql> select * from N_RollCall;
++------+------+-------+
+| rno  | name | marks |
++------+------+-------+
+|    1 | AAA  |    36 |
+|    6 | FFF  |    36 |
+|    2 | BBB  |    36 |
+|    3 | CCC  |    36 |
+|    4 | DDD  |    36 |
+|    5 | EEE  |    36 |
++------+------+-------+
+6 rows in set (0.00 sec)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+SQL> BEGIN
+       UPDATE O_RollCall SET marks = 40 WHERE (marks BETWEEN 35 AND 39);
+       IF sql%NOTFOUND THEN
+         dbms_output.put_line('No Record Found');
+       ELSE 
+         dbms_output.put_line(sql%ROWCOUNT || 'Record Found');
+       END IF;
+      END;
+
+Statement processed.
+
+2 Record Found
+
+
+
+
+
